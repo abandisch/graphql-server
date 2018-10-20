@@ -1,4 +1,7 @@
+require('dotenv').config()
 const { GraphQLServer } = require('graphql-yoga')
+const { Prisma } = require('prisma-binding')
+const { JWT_SECRET, PRISMA_ENDPOINT } = require('./config')
 
 const resolvers = {
   Query: {
@@ -31,7 +34,16 @@ const resolvers = {
 
 const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
-  resolvers
+  resolvers,
+  context: req => ({
+    ...req,
+    db: new Prisma({
+      typeDefs: 'src/database/generated/prisma.graphql',
+      endpoint: PRISMA_ENDPOINT,
+      secret: JWT_SECRET,
+      debug: true,
+    })
+  })
 })
 
 server.start(() => console.log('Server is running on http://localhost:4000'))
