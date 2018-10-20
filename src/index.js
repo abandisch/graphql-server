@@ -1,7 +1,7 @@
 require('dotenv').config()
 const { GraphQLServer } = require('graphql-yoga')
 const { Prisma } = require('prisma-binding')
-const { JWT_SECRET, PRISMA_ENDPOINT } = require('./config')
+const { JWT_SECRET, PRISMA_ENDPOINT, PORT } = require('./config')
 
 const resolvers = {
   Query: {
@@ -46,4 +46,4 @@ const server = new GraphQLServer({
   })
 })
 
-server.start(() => console.log('Server is running on http://localhost:4000'))
+server.start({ port: PORT }, ({ port }) => console.log(`Server is running on http://localhost:${port}`))
