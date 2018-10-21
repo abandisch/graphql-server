@@ -31,7 +31,7 @@ Before starting the project, the following two files need to be created locally
   
   Replace `yourjwtsecret` with the value held in `PRISMA_JWT_SECRET` the `.env` file (see below second point)
   
-  To generate the string for the endpoint, first ensure `prisma` is installed (`npm install -g prisma`), then run `prisma deploy`. Select the demo server and the default values for service and service. Once complete, the process will automatically add the `endpoint` to the `prisma.yml`
+  To generate the string for the endpoint, first ensure `prisma` is installed (`npm install -g prisma`), and the GraphQL ClI is installed globally (`npm install -g graphql-cli`), then run `prisma deploy`. Select the demo server and the default values for service and stage. Once complete, the process will automatically add the `endpoint` to the `prisma.yml`
 
 * `.env` - create this in the root directory of the project and put the following inside and provide values for each:
 
@@ -49,3 +49,11 @@ Before starting the project, the following two files need to be created locally
    PRISMA_JWT_SECRET="mysecretjwtpass"
    PRISMA_ENDPOINT="https://us1.prisma.sh/.../hackernews-clone-tute/dev"
   ```
+
+## Start the server
+
+To start in dev mode, type in `yarn run start:dev` (ensure `nodemon` is installed globally), otherwise just run `yarn start`
+
+## Start up the GraphQL Playground
+
+Ensure the GraphQL CLI is installed globally (`npm install -g graphql-cli`), start the server `yarn start`, then run `graphql playground`
