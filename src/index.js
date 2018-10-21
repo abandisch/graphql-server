@@ -4,11 +4,13 @@ const { Prisma } = require('prisma-binding')
 const { PRISMA_JWT_SECRET, PRISMA_ENDPOINT, PORT } = require('./config')
 const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
+const Subscription = require('./resolvers/Subscription')
 const AuthPayload = require('./resolvers/AuthPayload')
 
 const resolvers = {
   Query,
   Mutation,
+  Subscription,
   AuthPayload
 }
 
