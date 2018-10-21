@@ -2,7 +2,7 @@
 
 type Query {
   info: String!
-  feed (filter: String, skip: Int, first: Int, orderdBy: LinkOrderByInput): [Link!]! # skip/first used for pagination. skip == start index; first == limit
+  feed (filter: String, skip: Int, first: Int, orderBy: LinkOrderByInput): Feed! # skip/first used for pagination. skip == start index; first == limit
   link (id: ID!): Link
 }
 
@@ -30,4 +30,9 @@ type User {
   name: String
   email: String!
   links: [Link!]!
+}
+
+type Feed {
+  links: [Link!]!
+  count: Int!
 }
