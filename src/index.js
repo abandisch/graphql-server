@@ -1,7 +1,7 @@
 require('dotenv').config()
 const { GraphQLServer } = require('graphql-yoga')
 const { Prisma } = require('prisma-binding')
-const { JWT_SECRET, PRISMA_ENDPOINT, PORT } = require('./config')
+const { PRISMA_JWT_SECRET, PRISMA_ENDPOINT, PORT } = require('./config')
 
 const resolvers = {
   Query: {
@@ -40,7 +40,7 @@ const server = new GraphQLServer({
     db: new Prisma({
       typeDefs: 'src/database/generated/prisma.graphql',
       endpoint: PRISMA_ENDPOINT,
-      secret: JWT_SECRET,
+      secret: PRISMA_JWT_SECRET,
       debug: true,
     })
   })
