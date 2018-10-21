@@ -8,8 +8,24 @@ const newLinkSubscribe = (root, args, context, info) => {
   }, info)
 }
 
+const newVoteSubscribe = (root, args, context, info) => {
+  return context.db.subscription.vote({
+    where: {
+      mutation_in: ['CREATED']
+    }
+  }, info)
+}
+
 const newLink = {
   subscribe: newLinkSubscribe
 }
 
-module.exports = { newLink }
+const newVote = {
+  subscribe: newVoteSubscribe
+}
+
+
+module.exports = {
+  newLink,
+  newVote
+}
