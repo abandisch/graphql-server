@@ -37,6 +37,17 @@ async function login (root, args, context, info) {
   }
 }
 
+const post = (root, args, context, info) => {
+  const userId = getUserId(context)
+  return context.db.mutation.createLink({
+    data: {
+      url: args.url,
+      description: args.description,
+      postedBy: { connect: { id: userId } }
+    }
+  }, info)
+}
+
 module.exports = {
   signup,
   login,
