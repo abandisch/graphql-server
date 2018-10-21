@@ -10,4 +10,4 @@ const getUserId = context => {
   return userId
 }
 
-module.export  = { getUserId }
+module.exports = { getUserId }
