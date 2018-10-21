@@ -1,69 +1,49 @@
+require('dotenv').config()
 const { GraphQLServer } = require('graphql-yoga')
-
-let links = [
-  {
-    id: 'link-0',
-    url: 'www.howtographql.com',
-    description: 'Fullstack tutorial for GraphQL'
-  }
-]
-
-const getLink = (id) => links.find(lnk => lnk.id === id)
+const { Prisma } = require('prisma-binding')
+const { JWT_SECRET, PRISMA_ENDPOINT, PORT } = require('./config')
 
 const resolvers = {
   Query: {
     info: () => `This is the API of a Hackernews clone`,
-    feed: () => links,
-    link: (root, args) => getLink(args.id)
-  },
 
-  Mutation: {
-    post: (root, args) => {
-      const link = {
-        id: `link-${++links.length}`,
-        description: args.description,
-        url: args.url
-      }
-      links.push(link)
-      return link
-    },
-
-    updateLink: (root, args) => {
-      const l = getLink(args.id)
-      if (l) {
-        const lnks = links.map(lnk => {
-          if (lnk.id === l.id) {
-            if (args.url) lnk.url = args.url
-            if (args.description) lnk.description = args.description
-          }
-          return lnk
-        })
-        links = lnks
-        return getLink(l.id)
-      }
-      return null
-    },
-
-    deleteLink: (root, args) => {
-      const index = links.findIndex(lnk => lnk.id === args.id)
-      if (index < 0) return null
-      const link = links[index]
-      links.splice(index, 1)
-      return link
+    // root - parent
+    // args - arguments provided by the query/mutation
+    // context - every resolver has access to this. it's a means of resolvers to talk to eachother or to pass data/functions to the resolver
+    // info - the payload/selection set
+    feed: () => (root, args, context, info) => {
+      // {} - this contains any paramaters to send to Prisma with the query
+      // info - payload/selection set
+      return context.db.query.links({}, info)
     }
   },
 
-  // Link resolver is not needed, because it's so simple graphql can infer the resolvers for each field
-  // Link: {
-  //   id: (root) => root.id,
-  //   description: (root) => root.description,
-  //   url: (root) => root.url
-  // }
+  Mutation: {
+    post: (root, args, context, info) => {
+      return context.db.mutation.createLink({
+        data: {
+          url: args.url,
+          description: args.description
+        }
+      }, info)
+    },
+
+  },
+
 }
 
 const server = new GraphQLServer({
   typeDefs: './src/schema.graphql',
-  resolvers
+  resolvers,
+  context: req => ({
+    ...req,
+    db: new Prisma({
+      typeDefs: 'src/database/generated/prisma.graphql',
+      endpoint: PRISMA_ENDPOINT,
+      secret: JWT_SECRET,
+      debug: true,
+    })
+  })
 })
 
-server.start(() => console.log('Server is running on http://localhost:4000'))
+server.start({ port: PORT }, ({ port }) => console.log(`Server is running on http://localhost:${port}`))
