@@ -1,5 +1,6 @@
 # Prisma
 src/database/prisma.yml
+src/database/generated/prisma.graphql
 
 # Logs
 logs
