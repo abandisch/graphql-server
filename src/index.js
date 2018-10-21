@@ -1,35 +1,15 @@
 require('dotenv').config()
 const { GraphQLServer } = require('graphql-yoga')
 const { Prisma } = require('prisma-binding')
-const { JWT_SECRET, PRISMA_ENDPOINT, PORT } = require('./config')
+const { PRISMA_JWT_SECRET, PRISMA_ENDPOINT, PORT } = require('./config')
+const Query = require('./resolvers/Query')
+const Mutation = require('./resolvers/Mutation')
+const AuthPayload = require('./resolvers/AuthPayload')
 
 const resolvers = {
-  Query: {
-    info: () => `This is the API of a Hackernews clone`,
-
-    // root - parent
-    // args - arguments provided by the query/mutation
-    // context - every resolver has access to this. it's a means of resolvers to talk to eachother or to pass data/functions to the resolver
-    // info - the payload/selection set
-    feed: () => (root, args, context, info) => {
-      // {} - this contains any paramaters to send to Prisma with the query
-      // info - payload/selection set
-      return context.db.query.links({}, info)
-    }
-  },
-
-  Mutation: {
-    post: (root, args, context, info) => {
-      return context.db.mutation.createLink({
-        data: {
-          url: args.url,
-          description: args.description
-        }
-      }, info)
-    },
-
-  },
-
+  Query,
+  Mutation,
+  AuthPayload
 }
 
 const server = new GraphQLServer({
@@ -40,7 +20,7 @@ const server = new GraphQLServer({
     db: new Prisma({
       typeDefs: 'src/database/generated/prisma.graphql',
       endpoint: PRISMA_ENDPOINT,
-      secret: JWT_SECRET,
+      secret: PRISMA_JWT_SECRET,
       debug: true,
     })
   })
